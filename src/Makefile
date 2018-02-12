@@ -9,16 +9,16 @@
 #
 #**************************************************************************#
 
-include source.mk
+include sources.mk
 
 #***********Variables******
-GENFLAGS = -Wall -Werror -g -O0 -std=c99
-LDFLAGS = -Xlinker -Map=project1.map
-OBJS = $(SRCS:.c=.o)
-DEPS = $(SRCS:.c=.dep)
-PREPRO = $(SRCS:.c=.i)
-ASM = $(SRCS:.c=.asm)
-TARGET = project1.elf
+GENFLAGS:= -Wall -Werror -g -O0 -std=c99
+LDFLAGS:= -WI -Map=project1.map
+OBJS:= $(SRCS:.c=.o)
+DEPS:= $(SRCS:.c=.dep)
+PREPRO:= $(SRCS:.c=.i)
+ASM:= $(SRCS:.c=.asm)
+TARGET:= project1.elf
 
 #SRC defined in sources.mk
 #Includes defined in source.mk file
@@ -30,7 +30,7 @@ ifeq ($(PLATFORM),KL25Z)
 	ARCH= armv6-m
 	CPPFLAGS = -DKL25Z	
 	CFLAGS = $(GENFLAGS) -march=$(ARCH) -mcpu=$(CPU) -mthumb \
-		 -mfloat-abi=softfp -mfpu=fpv4-sp-d16 --specs=nosys.specs \
+		 -mfloat-abi=soft -mfpu=fpv4-sp-d16 --specs=nosys.specs \
 		 $(CPPFLAGS)
 	
 else ifeq ($(PLATFORM),BBB)
@@ -53,27 +53,15 @@ else
 endif	
 
 #******************************************************************************
-#*************Create only all dependency files**************************
-$(DEPS): $(SRCS)
-	$(CC) $(CFLAG) $(INCLUDES) $(LDFLAGS) -M $@ $^
+#**********Command "make clean"*******************************************
+.PHONY: clean
+clean:
+	rm -f $(OBJS) $(PREPRO) $(ASM) $(TARGET) $(DEPS) project1.map
 
-#******This section will generate the preprocessed files*****************
-$(PREPRO): $(SRCS)
-	$(CC) $(CFLAG) $(INCLUDES) -E $@ $^
-
-#******This section will generate the assembly files*********************
-$(ASM): $(SRCS)
-	$(CC) $(CFLAG) $(INCLUDES) -S $@ $^
-
-#*******Create only all object files*************************************
-$(OBJS): $(SRCS)
-	$(CC) $(CFLAG) $(INCLUDES) -c $@ $^
-
-#**********Command "make compile-all"*************************************
-.PHONY: compile-all
-target: $(OBJS)
-$(OBJS): $(SRCS)
-	$(CC) $(CFLAG) $(INCLUDES) $(LDFLAGS) -c $@ $^
+#**********Command "make size"*********************************************
+.PHONY: size
+size: 
+	size $(OBJS) $(TARGET)
 
 #**********Command "make build"*******************************************
 .PHONY: build
@@ -81,15 +69,81 @@ target: $(TARGET)
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAG) $(INCLUDES) $(LDFLAGS) -o $@ $^
 
-#**********Command "make clean"*******************************************
-.PHONY: clean
-target: 
-	rm $(OBJS) $(PREPRO) $(ASM) $(TARGET) $(DEPS) project1.map
+#**********Command "make compile-all"*************************************
+.PHONY: compile-all
+target: $(OBJS)
+$(OBJS): $(SRCS)
+	$(CC) $(CFLAG) $(INCLUDES) $(LDFLAGS) -c $@ $^ 
 
-#**********Command "make size"*********************************************
-.PHONY: size
-target: 
-	size $(OBJS) $(TARGET)
+#*************Create only all dependency files**************************
+$(DEPS): $(SRCS)
+	$(CC) $(CFLAG) $(INCLUDES) $(LDFLAGS) -M $@ $^ 
+
+#*******Create only all object files*************************************
+memory.o:memory.c
+	$(CC) $(CFLAG) $(INCLUDES) -c $@ $^
+
+project1.o:project1.c
+	$(CC) $(CFLAG) $(INCLUDES) -c $@ $^
+
+data.o:data.c
+	$(CC) $(CFLAG) $(INCLUDES) -c $@ $^
+
+debug.o:debug.c
+	$(CC) $(CFLAG) $(INCLUDES) -c $@ $^
+
+conversion.o:conversion.c
+	$(CC) $(CFLAG) $(INCLUDES) -c $@ $^
+
+main.o:main.c
+	$(CC) $(CFLAG) $(INCLUDES) -c $@ $^
+
+arch_arm32.o:arch_arm32.c
+	$(CC) $(CFLAG) $(INCLUDES) -c $@ $^
+
+#******This section will generate the assembly files*********************
+memory.asm:memory.c
+	$(CC) $(CFLAG) $(INCLUDES) -c $@ $^
+
+project1.asm:project1.c
+	$(CC) $(CFLAG) $(INCLUDES) -c $@ $^
+
+data.asm:data.c
+	$(CC) $(CFLAG) $(INCLUDES) -c $@ $^
+
+debug.asm:debug.c
+	$(CC) $(CFLAG) $(INCLUDES) -c $@ $^
+
+conversion.asm:conversion.c
+	$(CC) $(CFLAG) $(INCLUDES) -c $@ $^
+
+main.asm:main.c
+	$(CC) $(CFLAG) $(INCLUDES) -c $@ $^
+
+arch_arm32.asm:arch_arm32.c
+	$(CC) $(CFLAG) $(INCLUDES) -c $@ $^
+
+#******This section will generate the preprocessed files*****************
+memory.i:memory.c
+	$(CC) $(CFLAG) $(INCLUDES) -c $@ $^
+
+project1.i:project1.c
+	$(CC) $(CFLAG) $(INCLUDES) -c $@ $^
+
+data.i:data.c
+	$(CC) $(CFLAG) $(INCLUDES) -c $@ $^
+
+debug.i:debug.c
+	$(CC) $(CFLAG) $(INCLUDES) -c $@ $^
+
+conversion.i:conversion.c
+	$(CC) $(CFLAG) $(INCLUDES) -c $@ $^
+
+main.i:main.c
+	$(CC) $(CFLAG) $(INCLUDES) -c $@ $^
+
+arch_arm32.i:arch_arm32.c
+	$(CC) $(CFLAG) $(INCLUDES) -c $@ $^
 
 #**************************End of File************************************
 #************************************************************************
