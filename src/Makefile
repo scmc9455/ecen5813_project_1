@@ -27,15 +27,14 @@ TARGET = project1.elf
 ifeq ($(PLATFORM),KL25Z)
 	CPU = cortex-m0plus
 	CC = arm-none-eabi-gcc
-	ARCH= arm6v-m
+	ARCH= armv6-m
 	CPPFLAGS = -DKL25Z	
 	CFLAGS = $(GENFLAGS) -march=$(ARCH) -mcpu=$(CPU) -mthumb \
-		 -mfloat-abi=?? -mfpu=fpv4-sp-d16 --specs=nosys.specs \
+		 -mfloat-abi=softfp -mfpu=fpv4-sp-d16 --specs=nosys.specs \
 		 $(CPPFLAGS)
 	
 else ifeq ($(PLATFORM),BBB)
 	CC = arm-linux-gnueabi-gcc
-	ARCH = 
 	CPPFLAGS = -DBBB	
 	CFLAGS = $(GENFLAGS) $(CPPFLAGS) -DVERBOSE
 	
@@ -54,41 +53,44 @@ else
 endif	
 
 #******************************************************************************
-#This will be the targeted output executeable file that runs with ./project1.elf
-
-
-
-#*************Create only all dep files**************************
+#*************Create only all dependency files**************************
 $(DEPS): $(SRCS)
 	$(CC) $(CFLAG) $(INCLUDES) $(LDFLAGS) -M $@ $^
 
-#******This section will generate the preprocessed files*************
+#******This section will generate the preprocessed files*****************
 $(PREPRO): $(SRCS)
-	$(CC) $(CFLAG) $(INCLUDES) $(LDFLAGS) -E $@ $^
+	$(CC) $(CFLAG) $(INCLUDES) -E $@ $^
 
-#******This section will generate the assembly files*************
+#******This section will generate the assembly files*********************
 $(ASM): $(SRCS)
-	$(CC) $(CFLAG) $(INCLUDES) $(LDFLAGS) -S $@ $^
+	$(CC) $(CFLAG) $(INCLUDES) -S $@ $^
 
-#*******Create only all object files*****************************
+#*******Create only all object files*************************************
 $(OBJS): $(SRCS)
-	$(CC) $(CFLAG) $(INCLUDES) $(LDFLAGS) -c $@ $^
+	$(CC) $(CFLAG) $(INCLUDES) -c $@ $^
 
-#**********Command "make compile-all"*****************************
+#**********Command "make compile-all"*************************************
 .PHONY: compile-all
 target: $(OBJS)
 $(OBJS): $(SRCS)
 	$(CC) $(CFLAG) $(INCLUDES) $(LDFLAGS) -c $@ $^
 
-#**********Command "make build"**********************************
+#**********Command "make build"*******************************************
 .PHONY: build
 target: $(TARGET)
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAG) $(INCLUDES) $(LDFLAGS) -o $@ $^
 
-#**********Command "make build"**********************************
+#**********Command "make clean"*******************************************
 .PHONY: clean
 target: 
-	rm
+	rm $(OBJS) $(PREPRO) $(ASM) $(TARGET) $(DEPS) project1.map
 
+#**********Command "make size"*********************************************
+.PHONY: size
+target: 
+	size $(OBJS) $(TARGET)
+
+#**************************End of File************************************
+#************************************************************************
 
