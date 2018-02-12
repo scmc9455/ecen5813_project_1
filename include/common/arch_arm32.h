@@ -17,7 +17,6 @@ Created for ECEN5813
 #define __ARCH_ARM32__
 
 #include <stdint.h>
-#include <stdlib.h>
 
 #define __SCB_ADDRESS             (0xE000ED00)
 #define __AIRCR_ADDRESS_OFFSET    (12)

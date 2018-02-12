@@ -3,35 +3,37 @@
 
 @brief - platform.h file a header file for the debug function (compile time switch function)
 
-This is the header file for the compile time switching
+This is the header file for the compile time switching to enable or disable the printf 
+statement on platfors that do not support the function (such as the KL25z)
 
 @author - Scott McElroy
 
-@date - February 5, 2018
+@date - February 10, 2018
 
 Created for ECEN5813
 **********************************************************************************************/
 
 #ifndef __PLATFORM_H__
-#def    __PLATFORM_H__
-
-#include <stdlib.h>
-#include <stdint.h>
-#include <stdio.h>
+#define __PLATFORM_H__
 
 /*********************************************************************************************/
-/******************************print_array****************************************************/
-/**********************************************************************************************
-@brief- This function allows for debug using a print array
+/******************************compile time switch of printf**********************************/
+/*********************************************************************************************/
 
-The print array function is passed a pointer plus a length.
-This function takes whatever data is at the memory location and prints the hex output for 
-in bytes by the specified number.
+/*compile time switch for KL25z (disables the function)*/
+#ifdef KL25z 
+#ifndef PRINT (void)
+#define PRINT (void)
+/*compile time switch for Beagle Bone Black (enables the function)*/
+#elif BBB
+#ifndef PRINT printf
+#define PRINT printf
+/*compile time switch for Native Linux Host (enables the function)*/
+#elif HOST 
+#ifndef PRINT printf
+#define PRINT printf
+#endif /*End the compile time switch*/
 
-@param - NA
-@return - NA
-**********************************************************************************************/
-
-//void print_array(uint8_t *start, uint32_t length);
+/**********************************************************************************************/
 
 #endif /* __PLATFORM_H__ */

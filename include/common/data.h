@@ -22,8 +22,6 @@ Created for ECEN5813
 
 #include <stdint.h>
 #include <stdlib.h>
-#include <stddef.h>
-#include <stdio.h>
 
 #define _LITTLE_ENDIAN (0)
 #define _BIG_ENDIAN    (1)

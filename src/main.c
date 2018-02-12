@@ -27,11 +27,12 @@ Created for ECEN5813
 
 void main(void)
 {
-	
+    uint32_t run = 1;
+    	
     /* Call program only calls functions from project1() using a compile time switch */
     project1();
 	
-    while(1)
+    while(run)
     {	
         /* infinite loop in code */
     }

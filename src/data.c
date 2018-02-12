@@ -18,6 +18,7 @@ Created for ECEN5813
 **********************************************************************************************/
 
 #include "data.h"
+#include "platform.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <stddef.h>
@@ -36,47 +37,48 @@ Reports - Char, short, int, long, double, float, unsigned char, unsigned int, un
 
 void print_cstd_type_sizes()
 {
+    /*Compiler directive to ignore the emtpy variable when the KL25z doesnt use printf*/
     #if defined (__GNUC__)
     #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
     #endif
-
+    /*Variable temp configuration below used from project documentation*/
     size_t temp;
-
+    /*below prints the size of respective type based on the project 1 documentation*/
     temp = sizeof(char);
-    printf("Char %zd", temp);
+    PRINT("Char %zd", temp);
 
     temp = sizeof(short);
-    printf("Short %zd", temp);
+    PRINT("Short %zd", temp);
 
     temp = sizeof(int);
-    printf("Int %zd", temp);
+    PRINT("Int %zd", temp);
 
     temp = sizeof(long);
-    printf("Long %zd", temp);
+    PRINT("Long %zd", temp);
 
     temp = sizeof(double);
-    printf("Double %zd", temp);
+    PRINT("Double %zd", temp);
 
     temp = sizeof(float);
-    printf("Float %zd", temp);
+    PRINT("Float %zd", temp);
 
     temp = sizeof(unsigned char);
-    printf("Unsigner char %zd", temp);
+    PRINT("Unsigner char %zd", temp);
 	
     temp = sizeof(unsigned int);
-    printf("Unsigned int %zd", temp);
+    PRINT("Unsigned int %zd", temp);
 
     temp = sizeof(unsigned long);
-    printf("Unsigned long %zd", temp);
+    PRINT("Unsigned long %zd", temp);
 
     temp = sizeof(signed char);
-    printf("Signed char %zd", temp);
+    PRINT("Signed char %zd", temp);
 
     temp = sizeof(signed int);
-    printf("Signed int %zd", temp);
+    PRINT("Signed int %zd", temp);
 
     temp = sizeof(signed long);
-    printf("Signed long %zd", temp);
+    PRINT("Signed long %zd", temp);
 
     return;
 }
@@ -95,53 +97,54 @@ uint_least8_t, uint_least16_t, uint_least32_t, size_t, ptrdiff_t
 
 void print_stdint_type_sizes()
 {
-	#if defined (__GNUC__)
-	#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-	#endif
-
-size_t temp;
-
+    /*Compiler directive to ignore the emtpy variable when the KL25z doesnt use printf*/
+    #if defined (__GNUC__)
+    #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+    #endif
+    /*Variable temp configuration below used from project documentation*/
+    size_t temp;
+    /*below prints the size of respective type based on the project 1 documentation*/
     temp = sizeof(int8_t);
-    printf("int8_t %zd", temp);
+    PRINT("int8_t %zd", temp);
 
     temp = sizeof(uint8_t);
-    printf("uint8_t %zd", temp);
+    PRINT("uint8_t %zd", temp);
 
     temp = sizeof(int16_t);
-    printf("int16_t %zd", temp);
+    PRINT("int16_t %zd", temp);
 
     temp = sizeof(uint16_t);
-    printf("uint16_t %zd", temp);
+    PRINT("uint16_t %zd", temp);
 
     temp = sizeof(int32_t);
-    printf("int32_t %zd", temp);
+    PRINT("int32_t %zd", temp);
 
     temp = sizeof(uint32_t);
-    printf("uint32_t %zd", temp);
+    PRINT("uint32_t %zd", temp);
 
     temp = sizeof(uint_fast8_t);
-    printf("uint_fast8_t %zd", temp);
+    PRINT("uint_fast8_t %zd", temp);
 
     temp = sizeof(uint_fast16_t);
-    printf("uint_fast16_t %zd", temp);
+    PRINT("uint_fast16_t %zd", temp);
 
     temp = sizeof(uint_fast32_t);
-    printf("uint_fast32_t %zd", temp);
+    PRINT("uint_fast32_t %zd", temp);
 
     temp = sizeof(uint_least8_t);
-    printf("uint_least8_t %zd", temp);
+    PRINT("uint_least8_t %zd", temp);
 
     temp = sizeof(uint_least16_t);
-    printf("uint_least16_t %zd", temp);
+    PRINT("uint_least16_t %zd", temp);
 
     temp = sizeof(uint_least32_t);
-    printf("uint_least32_t %zd", temp);
+    PRINT("uint_least32_t %zd", temp);
 
     temp = sizeof(size_t);
-    printf("size_t %zd", temp);
+    PRINT("size_t %zd", temp);
 
     temp = sizeof(ptrdiff_t);
-    printf("ptrdiff_t %zd", temp);	
+    PRINT("ptrdiff_t %zd", temp);	
 	
     return;	
 }
@@ -159,50 +162,51 @@ Reports char *, short *, int *, long *, double *, float *, void *, int8_t *, int
 
 void print_pointer_sizes()
 {
+    /*Compiler directive to ignore the emtpy variable when the KL25z doesnt use printf*/
     #if defined (__GNUC__)
     #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
     #endif
-
+    /*Variable temp configuration below used from project documentation*/
     size_t temp;
-
+    /*below prints the size of respective type based on the project 1 documentation*/
     temp = sizeof(char *);
-    printf("Char * %zd", temp);
+    PRINT("Char * %zd", temp);
 
     temp = sizeof(short *);
-    printf("Short * %zd", temp);
+    PRINT("Short * %zd", temp);
 
     temp = sizeof(int *);
-    printf("Int * %zd", temp);
+    PRINT("Int * %zd", temp);
 
     temp = sizeof(long *);
-    printf("Long * %zd", temp);
+    PRINT("Long * %zd", temp);
 
     temp = sizeof(double *);
-    printf("Double * %zd", temp);
+    PRINT("Double * %zd", temp);
 
     temp = sizeof(float *);
-    printf("Float * %zd", temp);
+    PRINT("Float * %zd", temp);
 
     temp = sizeof(void *);
-    printf("Void * %zd", temp);
+    PRINT("Void * %zd", temp);
 
     temp = sizeof(int8_t *);
-    printf("Int8_t * %zd", temp);
+    PRINT("Int8_t * %zd", temp);
 
     temp = sizeof(int16_t *);
-    printf("Int16_t * %zd", temp);
+    PRINT("Int16_t * %zd", temp);
 
     temp = sizeof(int32_t *);
-    printf("Int32_t * %zd", temp);
+    PRINT("Int32_t * %zd", temp);
 
     temp = sizeof(char **);
-    printf("Char ** %zd", temp);
+    PRINT("Char ** %zd", temp);
 
     temp = sizeof(int **);
-    printf("Int ** %zd", temp);
+    PRINT("Int ** %zd", temp);
 
     temp = sizeof(void **);
-    printf("Void ** %zd", temp);
+    PRINT("Void ** %zd", temp);
 
     return;	
 }
