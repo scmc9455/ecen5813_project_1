@@ -13,7 +13,7 @@ include sources.mk
 
 #***********Variables******
 GENFLAGS:= -Wall -Werror -g -O0 -std=c99
-LDFLAGS:= -Xlinker -Map=project1.map
+LDFLAGS:= -Wl,-Map=main.map
 OBJS:= $(SRCS:.c=.o)
 DEPS:= $(SRCS:.c=.dep)
 PREPRO:= $(SRCS:.c=.i)
@@ -32,124 +32,123 @@ CPPFLAGS = -DKL25Z
 CFLAGS = $(GENFLAGS) -march=$(ARCH) -mcpu=$(CPU) -mthumb \
 -mfloat-abi=soft -mfpu=fpv4-sp-d16 --specs=nosys.specs \
 $(CPPFLAGS)
-INCLUDES = -l./../repos/ecen5813_project_1/include/common \
--l./../repos/ecen5813_project_1/include/kl25z \
--l./../repos/ecen5813_project_1/include/CMSIS \
--l./../repos/ecen5813_project_1/platform
+INCLUDES = -I./../include/common \
+-I./../include/kl25z \
+-I./../include/CMSIS \
+-I./../platform
+LDFLAGS += -T../platform/MKL25Z128xxx4_flash.ld
 else ifeq ($(PLATFORM),BBB)
 CC = arm-linux-gnueabi-gcc
 CPPFLAGS = -DBBB	
 CFLAGS = $(GENFLAGS) $(CPPFLAGS) -DVERBOSE
-INCLUDES = -l./../repos/ecen5813_project_1/include/common \
--l./../include/CMSIS
+INCLUDES = -I./../include/common \
+-I./../include/CMSIS
 
 else ifeq ($(PLATFORM),HOST)
 CC = gcc
 CPPFLAGS = -DHOST
 CFLAGS = $(GENFLAGS) $(CPPFLAGS) -DVERBOSE
-INCLUDES:= -l./../repos/ecen5813_project_1/include/common
+INCLUDES:= -I./../include/common \
+-I./../include/CMSIS
 
 #this will default to the native compiler
 else 
 CC= gcc
 CFLAG = $(GENFLAGS) -DVERBOSE
 CPPFLAGS = -DHOST
-INCLUDES:= -l./../include/common
+INCLUDES:= -I./../include/common
 
 endif	
 
 #******************************************************************************
+#**********Command "make build"*******************************************
+.PHONY: build
+build: $(TARGET)
+$(TARGET):$(OBJS)
+	$(CC) $(CFLAG) $(INCLUDES) $(LDFLAGS) $(OBJS) -o $(TARGET)
+
 #**********Command "make clean"*******************************************
 .PHONY: clean
 clean:
-	rm -f $(OBJS) $(PREPRO) $(ASM) $(TARGET) $(DEPS) project1.map
+	rm -f *.o *.i *.asm *.elf *.dep *.map
 
 #**********Command "make size"*********************************************
 .PHONY: size
 size: 
 	size $(OBJS) $(TARGET)
 
-#**********Command "make build"*******************************************
-.PHONY: build
-target:$(TARGET)
-$(TARGET):$(OBJS)
-	$(CC) $(CFLAG) $(INCLUDES) $(LDFLAGS) -o $@ $^
-
-#**********Command "make compile-all"*************************************
-.PHONY: compile-all
-target:$(OBJS)
-$(OBJS):$(SRCS)
-	$(CC) $(CFLAG) $(INCLUDES) $(LDFLAGS) -c $@ $^ 
-
 #*************Create only all dependency files**************************
 $(DEPS):$(SRCS)
-	$(CC) $(CFLAG) $(INCLUDES) $(LDFLAGS) -M $@ $^ 
-
-#*******Create only all object files*************************************
-memory.o:memory.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c memory.o memory.c
-
-project1.o:project1.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c project.o project1.c
-
-data.o:data.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c data.o data.c
-
-debug.o:debug.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c debug.o debug.c
-
-conversion.o:conversion.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c conversion.o conversion.c
-
-main.o:main.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c main.o main.c
-
-arch_arm32.o:arch_arm32.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c arch_arm32.o arch_arm32.c
+	$(CC) $(CFLAG) $(INCLUDES) $(LDFLAGS) $@ -M -o $^ 
 
 #******This section will generate the assembly files*********************
 memory.asm:memory.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c memory.asm memory.c
+	$(CC) $(CFLAGS) $(INCLUDES) memory.c -S -o memory.asm
 
 project1.asm:project1.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c project1.asm project1.c
+	$(CC) $(CFLAGS) $(INCLUDES) project1.c -S -o project1.asm
 
-data.asm:data.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c data.asm data.c
+data1.asm:data1.c
+	$(CC) $(CFLAGS) $(INCLUDES) data1.c -S -o data1.asm
 
 debug.asm:debug.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c debug.asm debug.c
+	$(CC) $(CFLAGS) $(INCLUDES) debug.c -S -o debug.asm
 
 conversion.asm:conversion.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c conversion.asm conversion.c
+	$(CC) $(CFLAGS) $(INCLUDES) conversion.S -c -o conversion.asm
 
 main.asm:main.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c main.asm main.c
+	$(CC) $(CFLAGS) $(INCLUDES) main.c -S -o main.asm 
 
 arch_arm32.asm:arch_arm32.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c arch_arm32.asm arch_arm32.c
+	$(CC) $(CFLAGS) $(INCLUDES) arch_arm32.c -S -o arch_arm32.asm
 
 #******This section will generate the preprocessed files*****************
 memory.i:memory.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c memory.i memory.c
+	$(CC) $(CFLAGS) $(INCLUDES)  memory.c -E -o memory.i
 
 project1.i:project1.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c project1.i project1.c
+	$(CC) $(CFLAGS) $(INCLUDES)  project1.c -E -o project1.i
 
-data.i:data.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c data.i data.c
+data1.i:data.c
+	$(CC) $(CFLAGS) $(INCLUDES) data1.c -E -o data1.i 
 
 debug.i:debug.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c debug.i debug.c
+	$(CC) $(CFLAGS) $(INCLUDES) debug.c -E -o debug.i 
 
 conversion.i:conversion.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c conversion.i conversion.c
+	$(CC) $(CFLAGS) $(INCLUDES) conversion.c -E -o conversion.i 
 
 main.i:main.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c main.i main.c
+	$(CC) $(CFLAGS) $(INCLUDES) main.c -E -o main.i 
 
 arch_arm32.i:arch_arm32.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c arch_arm32.i arch_arm32.c
+	$(CC) $(CFLAGS) $(INCLUDES) arch_arm32.c -E -o arch_arm32.i 
+
+#**********Command "make compile-all"*************************************
+.PHONY: compile-all
+compile-all: $(OBJS)
+#*******Create only all object files*************************************
+memory.o:memory.c
+	$(CC) $(CFLAGS) $(INCLUDES) memory.c -c -o memory.o
+
+project1.o:project1.c
+	$(CC) $(CFLAGS) $(INCLUDES) project1.c -c -o project1.o
+
+data1.o:data1.c
+	$(CC) $(CFLAGS) $(INCLUDES) data1.c -c -o data1.o
+
+debug.o:debug.c
+	$(CC) $(CFLAGS) $(INCLUDES) debug.c -c -o debug.o
+
+conversion.o:conversion.c
+	$(CC) $(CFLAGS) $(INCLUDES) conversion.c -c -o conversion.o
+
+main.o:main.c
+	$(CC) $(CFLAGS) $(INCLUDES) main.c -c -o main.o
+
+arch_arm32.o:arch_arm32.c
+	$(CC) $(CFLAGS) $(INCLUDES) arch_arm32.c -c -o arch_arm32.o
 
 #**************************End of File************************************
 #************************************************************************

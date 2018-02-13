@@ -36,6 +36,6 @@ This is meant to be an inline function.
 @return - the endianness of the processor
 **********************************************************************************************/
 
-uint32_t ARM32_AIRCR_get_endianness_setting() __attribute__((always_inline));
+static inline uint32_t ARM32_AIRCR_get_endianness_setting() __attribute__((always_inline));
 
 #endif /*_ARCH_ARM32_*/

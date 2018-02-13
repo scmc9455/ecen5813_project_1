@@ -28,7 +28,7 @@ This is meant to be an inline function.
 @param - none
 @return - the endianness of the processor
 **********************************************************************************************/
-__attribute__((always_inline)) uint32_t ARM32_AIRCR_get_endianness_setting()
+__attribute__ ((always_inline)) static inline uint32_t ARM32_AIRCR_get_endianness_setting()
 {
 
     uint32_t endian_var;

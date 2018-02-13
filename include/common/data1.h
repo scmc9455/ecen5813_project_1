@@ -17,8 +17,8 @@ This file is the header file for the data.c file and includes the functions
 Created for ECEN5813
 **********************************************************************************************/
 
-#ifndef __DATA_H__
-#define __DATA_H__
+#ifndef __DATA1_H__
+#define __DATA1_H__
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -95,4 +95,4 @@ This will report back what the data endianness is so it can be changed if need b
 
 uint32_t determine_endianness();
 
-#endif /*__DATA_H__*/
+#endif /*__DATA1_H__*/

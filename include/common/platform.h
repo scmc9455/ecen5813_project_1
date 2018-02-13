@@ -20,20 +20,15 @@ Created for ECEN5813
 /******************************compile time switch of printf**********************************/
 /*********************************************************************************************/
 
+/*compile time switch for HOST/Beagle Bone Black (enables the function)*/
+#ifdef VERBOSE 
+#define PRINTF printf
+#endif
 /*compile time switch for KL25z (disables the function)*/
-#ifdef KL25z 
-#ifndef PRINT (void)
-#define PRINT (void)
-/*compile time switch for Beagle Bone Black (enables the function)*/
-#elif BBB
-#ifndef PRINT printf
-#define PRINT printf
-/*compile time switch for Native Linux Host (enables the function)*/
-#elif HOST 
-#ifndef PRINT printf
-#define PRINT printf
+#ifndef VERBOSE 
+#define PRINTF(...)
 #endif /*End the compile time switch*/
 
-/**********************************************************************************************/
+/******************************************************************************************/
 
 #endif /* __PLATFORM_H__ */

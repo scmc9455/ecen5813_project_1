@@ -13,19 +13,9 @@ This also include all the necessary libraries and headers that are used in each 
 Created for ECEN5813
 **********************************************************************************************/
 
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stddef.h>
+#include "project1.h"
 
-#include "MKL25Z4.h"
-#include "project.h"
-#include "memory.h"
-#include "conversion.h"
-#include "debug.h"
-#include "data.h"
-
-void main(void)
+int main(void)
 {
     uint32_t run = 1;
     	
