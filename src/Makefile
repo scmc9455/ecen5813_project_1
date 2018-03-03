@@ -17,8 +17,9 @@ LDFLAGS:= -Wl,-Map=main.map
 OBJS:= $(SRCS:.c=.o)
 DEPS:= $(SRCS:.c=.dep)
 PREPRO:= $(SRCS:.c=.i)
-ASM:= $(SRCS:.c=.asm)
+ASM:= $(SRCS:.c=.s)
 TARGET:= project1.elf
+DEPFLAGS = #-MT -$@ -MMD -MP -MF $*.dep
 
 #SRC defined in sources.mk
 #Includes defined in source.mk file
@@ -27,27 +28,23 @@ TARGET:= project1.elf
 ifeq ($(PLATFORM),KL25Z)
 CPU = cortex-m0plus
 CC = arm-none-eabi-gcc
-ARCH= armv6-m
-CPPFLAGS = -DKL25Z	
+ARCH= armv6-m	
 CFLAGS = $(GENFLAGS) -march=$(ARCH) -mcpu=$(CPU) -mthumb \
--mfloat-abi=soft -mfpu=fpv4-sp-d16 --specs=nosys.specs \
-$(CPPFLAGS)
+-mfloat-abi=soft -mfpu=fpv4-sp-d16 --specs=nosys.specs
 INCLUDES = -I./../include/common \
 -I./../include/kl25z \
 -I./../include/CMSIS \
 -I./../platform
-LDFLAGS += -T../platform/MKL25Z128xxx4_flash.ld
+LDFLAGS += -T ./../platform/MKL25Z128xxx4_flash.ld
 else ifeq ($(PLATFORM),BBB)
 CC = arm-linux-gnueabi-gcc
-CPPFLAGS = -DBBB	
-CFLAGS = $(GENFLAGS) $(CPPFLAGS) -DVERBOSE
+CFLAGS = $(GENFLAGS) -DVERBOSE 
 INCLUDES = -I./../include/common \
 -I./../include/CMSIS
 
 else ifeq ($(PLATFORM),HOST)
 CC = gcc
-CPPFLAGS = -DHOST
-CFLAGS = $(GENFLAGS) $(CPPFLAGS) -DVERBOSE
+CFLAGS = $(GENFLAGS) -DVERBOSE 
 INCLUDES:= -I./../include/common \
 -I./../include/CMSIS
 
@@ -63,45 +60,56 @@ endif
 #******************************************************************************
 #**********Command "make build"*******************************************
 .PHONY: build
-build: $(TARGET)
+build: clean $(TARGET)
 $(TARGET):$(OBJS)
-	$(CC) $(CFLAG) $(INCLUDES) $(LDFLAGS) $(OBJS) -o $(TARGET)
+	$(CC) $(CFLAGS) $(INCLUDES) $(LDFLAGS) $(OBJS) -o $(TARGET)
 
 #**********Command "make clean"*******************************************
 .PHONY: clean
-clean:
-	rm -f *.o *.i *.asm *.elf *.dep *.map
+clean: 
+	rm -f *.o *.i *.s *.elf *.dep *.map
 
 #**********Command "make size"*********************************************
 .PHONY: size
 size: 
 	size $(OBJS) $(TARGET)
 
+#**********Command "make upload_BBB"*********************************************
+.PHONY: upload_BBB
+upload_BBB: $(TARGET) LOAD
+
+.PHONY: LOAD
+LOAD: 
+	sudo scp project1.elf root@192.168.7.2:/root/ecen5813_project_1
+	
 #*************Create only all dependency files**************************
+.PHONY: deps
+deps:$(DEPS)
+
 $(DEPS):$(SRCS)
-	$(CC) $(CFLAG) $(INCLUDES) $(LDFLAGS) $@ -M -o $^ 
+	$(CC) $(CFLAG) $(INCLUDES) $(LDFLAGS) $(SRCS) -M -o $(DEPS) 
 
 #******This section will generate the assembly files*********************
-memory.asm:memory.c
-	$(CC) $(CFLAGS) $(INCLUDES) memory.c -S -o memory.asm
+memory.s:memory.c
+	$(CC) $(CFLAGS) $(INCLUDES) memory.c -S -o memory.s
 
-project1.asm:project1.c
-	$(CC) $(CFLAGS) $(INCLUDES) project1.c -S -o project1.asm
+project1.s:project1.c
+	$(CC) $(CFLAGS) $(INCLUDES) project1.c -S -o project1.s
 
-data1.asm:data1.c
-	$(CC) $(CFLAGS) $(INCLUDES) data1.c -S -o data1.asm
+data1.s:data1.c
+	$(CC) $(CFLAGS) $(INCLUDES) data1.c -S -o data1.s
 
-debug.asm:debug.c
-	$(CC) $(CFLAGS) $(INCLUDES) debug.c -S -o debug.asm
+debug.s:debug.c
+	$(CC) $(CFLAGS) $(INCLUDES) debug.c -S -o debug.s
 
-conversion.asm:conversion.c
-	$(CC) $(CFLAGS) $(INCLUDES) conversion.S -c -o conversion.asm
+conversion.s:conversion.c
+	$(CC) $(CFLAGS) $(INCLUDES) conversion.S -c -o conversion.s
 
-main.asm:main.c
-	$(CC) $(CFLAGS) $(INCLUDES) main.c -S -o main.asm 
+main.s:main.c
+	$(CC) $(CFLAGS) $(INCLUDES) main.c -S -o main.s
 
-arch_arm32.asm:arch_arm32.c
-	$(CC) $(CFLAGS) $(INCLUDES) arch_arm32.c -S -o arch_arm32.asm
+arch_arm32.s:arch_arm32.c
+	$(CC) $(CFLAGS) $(INCLUDES) arch_arm32.c -S -o arch_arm32.s
 
 #******This section will generate the preprocessed files*****************
 memory.i:memory.c
@@ -149,6 +157,15 @@ main.o:main.c
 
 arch_arm32.o:arch_arm32.c
 	$(CC) $(CFLAGS) $(INCLUDES) arch_arm32.c -c -o arch_arm32.o
+
+system_MKL25Z4.o:system_MKL25Z4.c
+	$(CC) $(CFLAGS) $(INCLUDES) system_MKL25Z4.c -c -o system_MKL25Z4.o
+
+startup_MKL25Z4.o:startup_MKL25Z4.S
+	$(CC) $(CFLAGS) $(INCLUDES) startup_MKL25Z4.S -M -o startup_MKL25Z4.o
+
+gpio.o:gpio.c
+	$(CC) $(CFLAGS) $(INCLUDES) gpio.c -c -o gpio.o
 
 #**************************End of File************************************
 #************************************************************************

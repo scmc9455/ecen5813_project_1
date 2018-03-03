@@ -24,7 +24,6 @@ Created for ECEN5813
 
 #include <stdlib.h>
 #include <stdint.h>
-
 /*********************************************************************************************/
 /****************************memmove**********************************************************/
 /**********************************************************************************************
@@ -51,29 +50,27 @@ uint8_t  *my_memmove(uint8_t *src, uint8_t *dst, size_t length)
     {
         return NULL;  
     }
-
-    uint8_t temp;                 
-    uint8_t *p= &temp;       
+               
+    uint8_t *temp_store_loc= (uint8_t *)malloc(length);       
     uint8_t var_len = 0;      
   
     /* This section of function copies the source contents to the 
     variable location to avoid corruption */
     while(var_len < length)
     {
-        *(p + var_len) = *(src + var_len);  
+        *(temp_store_loc + var_len) = *(src + var_len);
         var_len++;               
     }
     
     var_len = 0;
-	
     /* This section of function copies the variable contents to the destination 
     location to copy even though their might be overlap */
     while(var_len < length)
     {
-        *(dst + var_len) = *(p + var_len);
+        *(dst + var_len) = *(temp_store_loc + var_len);
         var_len++;
     }
-	
+    	
     /* Check to see if the dst pointer is greater then zero and return NULL if its incorrect */ 
     return ! dst  ? dst : NULL;     
 }
@@ -136,14 +133,11 @@ uint8_t  *my_memset(uint8_t *src, size_t length, uint8_t value)
         return NULL;  
     }
     
-    uint8_t temp = value;
     uint8_t var_len = 0;
-    uint8_t *temp_ptr = &temp;  /* Initialize a temp pointer to be able to load the memory */
-    
     /* Load the value into the memory with the pointer */	
     while(var_len < length)
     {
-        *(src + var_len) = *(temp_ptr + var_len);
+        *(src + var_len) = value;
         var_len++;
     }
 
@@ -207,15 +201,14 @@ uint8_t  *my_reverse(uint8_t *src, size_t length)
 	
     uint8_t temp;
     uint8_t var_len = 0;
-    uint8_t *var_end = (src + (uint8_t)length);
-
+    uint8_t *var_end = (src + ((uint8_t)length-1));
     /* This section will reverse the order base on half of the length
     since this is an integer, a division by 2 will eliminate the fraction portion of a divion
     this will help determine the function even with odd lengths */
-    while(var_len <= (length/2) )
+    while(var_len <= (length/2 - 1) )
     {
         temp = *(src + var_len);
-        *(var_end - var_len) = *(src + var_len);
+        *(src + var_len) = *(var_end - var_len);
         *(var_end - var_len) = temp;
         var_len++;
     }
@@ -236,15 +229,16 @@ The function returns the location of the newly allocated memory.
 @param - length: address of reserved memory
 @return - mem_loc: Returns the location address of the reserved memory block
 **********************************************************************************************/
-void *reserve_words(size_t length)
+void * reserve_words(size_t length)
 {
-    int32_t *mem_loc = NULL;  /* initial an address to return */
-	
-    /* allocates a block of memory of size length and cast the pointer to the return type */
-    mem_loc = (int32_t *) malloc(length); 
+    uint32_t byte_size = 4;
 
-    /* Returns NULL from malloc if malloc didnt run correctly*/    
-    return mem_loc; 
+    if(length > 0)
+    {  
+        return (void *) malloc(length*(byte_size));
+    }else{
+        return NULL; 
+    }
 }
 
 /*********************************************************************************************/

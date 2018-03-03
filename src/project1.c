@@ -30,7 +30,6 @@ int8_t test_data1() {
   int32_t num = -4096;
   uint32_t digits;
   int32_t value;
-  uint32_t BASE_16 = 16;
 
   PRINTF("\ntest_data1();\n");
   ptr = (uint8_t*) reserve_words( DATA_SET_SIZE_W );
@@ -42,9 +41,10 @@ int8_t test_data1() {
 
   digits = my_itoa( num, ptr, BASE_16);   
   value = my_atoi( ptr, digits, BASE_16);
+
   #ifdef VERBOSE
-  PRINTF("  Initial number: %d\n", num);  
-  PRINTF("  Final Decimal number: %d\n", value);  
+  printf("  Initial number: %d\n", num);  
+  printf("  Final Decimal number: %d\n", value);  
   #endif
   free_words( (uint32_t*)ptr );
 
@@ -60,7 +60,6 @@ int8_t test_data2() {
   int32_t num = 123456;
   uint32_t digits;
   int32_t value;
-  uint32_t BASE_10 = 10;
 
   PRINTF("test_data2();\n");
   ptr = (uint8_t*) reserve_words( DATA_SET_SIZE_W );
@@ -309,6 +308,7 @@ int8_t test_reverse()
   my_memcpy(set, copy, MEM_SET_SIZE_B);
 
   print_array(set, MEM_SET_SIZE_B);
+  print_array(copy, MEM_SET_SIZE_B);////////////////////
   my_reverse(set, MEM_SET_SIZE_B);
   print_array(set, MEM_SET_SIZE_B);
 

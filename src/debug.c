@@ -43,11 +43,10 @@ void print_array(uint8_t *start, uint32_t length)
     }
 	
     uint8_t *mem_val = start; /*create a pointer that can move*/
-
     /*printf one byte at a time*/
     while(length > 0)
     {
-        printf("%X", *mem_val);
+        printf("%x ", *mem_val);
         length--;
         mem_val++;
     }
